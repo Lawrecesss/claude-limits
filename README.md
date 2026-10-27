@@ -48,8 +48,9 @@ Environment variables, read at startup:
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `CLAUDE_LIMITS_INTERVAL` | `300` | Seconds between polls |
-| `CLAUDE_LIMITS_WARN` | `75` | Percent at which the icon turns amber |
-| `CLAUDE_LIMITS_CRIT` | `90` | Percent at which it turns red |
+| `CLAUDE_LIMITS_YELLOW` | `50` | Percent at which the icon turns yellow |
+| `CLAUDE_LIMITS_ORANGE` | `70` | Percent at which it turns orange |
+| `CLAUDE_LIMITS_RED` | `90` | Percent at which it turns red |
 | `CLAUDE_CONFIG_DIR` | `~/.claude` | Where to find `.credentials.json` |
 
 Set them in the unit with `systemctl --user edit claude-limits.service`.
@@ -73,8 +74,17 @@ The token is not refreshed here. If it expires the label shows `re-auth`; run
 
 ## Icons
 
-`icons/claude.png` is the source of truth. `make-icons.py` derives the amber and
-red variants from it by recolouring opaque pixels, keeping per-pixel alpha so
+The mark changes colour with whichever window is further along:
+
+| Usage | Icon |
+| --- | --- |
+| below 50% | white |
+| 50–70% | yellow |
+| 70–90% | orange |
+| 90–100%, and on errors | red |
+
+`icons/claude.png` is the source of truth. `make-icons.py` derives the three
+tinted variants from it by recolouring opaque pixels, keeping per-pixel alpha so
 the edges stay smooth. The icon is the only pressure cue a tray item has — its
 label is plain text and cannot be coloured.
 
@@ -83,7 +93,7 @@ To restyle, replace `icons/claude.png` or edit `TINTS`, then:
     /usr/bin/python3 -I make-icons.py
     systemctl --user restart claude-limits.service
 
-To keep the mark white at all times, set both `TINTS` entries to
+To keep the mark white at all times, set every `TINTS` entry to
 `(255, 255, 255)`.
 
 Icons are referenced by absolute path; the AppIndicator extension treats an icon

@@ -28,24 +28,30 @@ APP_ID = "claude-limits"
 # path, so these are used directly — no icon-theme install needed.
 ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons")
 ICON_OK = os.path.join(ICON_DIR, "claude.png")
-ICON_WARN = os.path.join(ICON_DIR, "claude-warn.png")
-ICON_CRIT = os.path.join(ICON_DIR, "claude-crit.png")
+ICON_YELLOW = os.path.join(ICON_DIR, "claude-yellow.png")
+ICON_ORANGE = os.path.join(ICON_DIR, "claude-orange.png")
+ICON_RED = os.path.join(ICON_DIR, "claude-red.png")
 # Falls back to a stock icon if the drawn ones ever go missing.
 ICON_FALLBACK = "utilities-system-monitor-symbolic"
 
 
 def icon_for(percent):
-    if percent >= CRIT_AT:
-        path = ICON_CRIT
-    elif percent >= WARN_AT:
-        path = ICON_WARN
+    if percent >= RED_AT:
+        path = ICON_RED
+    elif percent >= ORANGE_AT:
+        path = ICON_ORANGE
+    elif percent >= YELLOW_AT:
+        path = ICON_YELLOW
     else:
         path = ICON_OK
     return path if os.path.exists(path) else ICON_FALLBACK
 
 REFRESH_SECONDS = int(os.environ.get("CLAUDE_LIMITS_INTERVAL", "300"))
-WARN_AT = int(os.environ.get("CLAUDE_LIMITS_WARN", "75"))
-CRIT_AT = int(os.environ.get("CLAUDE_LIMITS_CRIT", "90"))
+
+# Lower bound of each colour band; below the first the mark stays white.
+YELLOW_AT = int(os.environ.get("CLAUDE_LIMITS_YELLOW", "50"))
+ORANGE_AT = int(os.environ.get("CLAUDE_LIMITS_ORANGE", "70"))
+RED_AT = int(os.environ.get("CLAUDE_LIMITS_RED", "90"))
 
 
 def credentials_path():
@@ -241,7 +247,7 @@ class ClaudeLimitsTray:
             icon_for(worst), f"Claude: session {s_pct}%, weekly {w_pct}%"
         )
 
-        flag = " ⚠" if worst >= WARN_AT else ""
+        flag = " ⚠" if worst >= ORANGE_AT else ""
         self.rows["session"].set_label(
             f"Session (5h): {s_pct}% — {format_reset(session.get('resets_at'))}{flag}"
         )

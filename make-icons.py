@@ -18,10 +18,12 @@ ICON_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "icons")
 SOURCE = os.path.join(ICON_DIR, "claude.png")
 
 # The icon is the only pressure cue a tray item has — its text label cannot be
-# coloured. Set both to (255, 255, 255) to keep the mark white at all times.
+# coloured. claude.png itself stays white and covers everything below the first
+# band. Set these all to (255, 255, 255) to keep the mark white at all times.
 TINTS = {
-    "claude-warn": (240, 180, 41),
-    "claude-crit": (240, 82, 82),
+    "claude-yellow": (245, 203, 66),
+    "claude-orange": (240, 140, 50),
+    "claude-red": (240, 82, 82),
 }
 
 
