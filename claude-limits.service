@@ -1,0 +1,13 @@
+[Unit]
+Description=Claude usage limits tray indicator
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/.local/share/claude-limits/claude-limits-tray.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical-session.target
